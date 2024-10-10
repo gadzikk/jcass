@@ -1,0 +1,147 @@
+CASSANDRA:
+ zapytania
+  - cqlSession.execute
+  - SimpleStatement
+  - PreparedStatement
+  - cqlTemplate.query/queryForObject/execute
+  - queryBuilder
+  - @dao @query @getEntity
+  https://docs.datastax.com/en/drivers/java/3.0/com/datastax/driver/core/Statement.html
+  https://www.baeldung.com/cassandra-datastax-java-driver
+  https://docs.datastax.com/en/developer/java-driver/4.0/manual/query_builder/idempotence/index.html
+  https://docs.datastax.com/en/developer/java-driver/4.17/manual/mapper/daos/getentity/index.html
+  https://github.com/eugenp/tutorials/blob/master/persistence-modules/spring-data-cassandra-2/src/main/java/org/baeldung/objectmapper/dao/UserDao.java
+  https://github.com/ipyton/blog_backend/blob/34d4392b726b921cbcb62d8bd58f8a0d486130c2/src/main/java/com/chen/blogbackend/DAO/UserGroupDao.java
+  https://stackoverflow.com/questions/55911054/what-is-the-format-of-pagingstate-as-string-in-datastax
+  https://github.com/spring-projects/spring-data-cassandra/issues/1357
+  https://niels.nu/blog/2016/cassandra-resultset-paging
+  https://venkatjavasource.wordpress.com/2015/08/07/cassandra-paging-java-example/
+  https://www.dynatrace.com/news/blog/pagination-with-cassandra-and-what-we-can-learn-from-it/
+  https://docs.datastax.com/en/developer/java-driver/3.3/manual/custom_codecs/extras/index.html
+  https://www.baeldung.com/cassandra-object-mapping-datastax-java-driver
+  https://docs.datastax.com/en/developer/java-driver/3.0/manual/statements/prepared/index.html
+  https://docs.datastax.com/en/developer/java-driver/4.17/manual/core/paging/index.html
+  https://docs.datastax.com/en/developer/java-driver/4.17/manual/core/performance/index.html
+  https://docs.datastax.com/en/developer/java-driver/3.6/manual/object_mapper/creating/index.html#mapping-collections
+  https://docs.spring.io/spring-data/cassandra/reference/object-mapping.html
+  https://gitee.com/orwen/spring-data-cassandra
+  https://doc.castsoftware.com/export/TECHNOS/Cassandra+for+Java+-+1.0
+  https://stackoverflow.com/questions/41881168/wanted-help-making-springboot-cassandratemplate-example-work
+  https://docs.spring.io/spring-data/cassandra/reference/cassandra/configuration.html
+
+employees
+managers
+teams
+employees_by_managers
+emplyees_by_teams
+accounts
+transactions (OUTGOING, INCOMING, BUY, SELL, DEPOSIT, WITHDRAWAL)
+transactions_by_accounts
+latest_transactions
+TRUNCATE TABLE employees;
+TRUNCATE TABLE managers;
+TRUNCATE TABLE teams;
+TRUNCATE TABLE employees_by_managers;
+TRUNCATE TABLE emplyees_by_teams;
+TRUNCATE TABLE accounts;
+TRUNCATE TABLE transactions;
+TRUNCATE TABLE transactions_by_accounts;
+TRUNCATE TABLE latest_transactions;
+
+DROP TABLE employees;
+DROP TABLE managers;
+DROP TABLE teams;
+DROP TABLE employees_by_managers;
+DROP TABLE emplyees_by_teams;
+DROP TABLE accounts;
+DROP TABLE transactions;
+DROP TABLE transactions_by_accounts;
+DROP TABLE latest_transactions;
+
+
+CREATE TABLE employees
+             (
+                          id TIMEUUID,
+						  email TEXT,
+						  name TEXT,
+						  team TEXT,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (id, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE managers
+             (
+                          id TIMEUUID,
+						  email TEXT,
+						  name TEXT,
+						  reports_to TEXT,
+						  team TEXT,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (id, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE teams
+             (
+                          id TIMEUUID,
+						  name TEXT,
+						  manager TEXT,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (id, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE emplyees_by_teams
+             (
+                          team_id TIMEUUID,
+						  id TIMEUUID,
+						  email TEXT,
+						  name TEXT,
+						  team TEXT,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (team_id, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE accounts
+             (
+						  email TEXT,
+						  name TEXT,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (email, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE transactions
+             (
+                          id TIMEUUID,
+						  sender_id TEXT,
+						  receiver_id TEXT,
+						  amount DECIMAL,
+						  currency TEXT,
+						  type TEXT,
+						  description TEXT,
+						  approved_by TIMEUUID,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (id, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE transactions_by_accounts
+             (
+                          account_id TEXT,
+						  id TIMEUUID,
+						  sender_id TEXT,
+						  receiver_id TEXT,
+						  type TEXT,
+						  approved_by TIMEUUID,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (account_id, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE latest_transactions
+             (
+                          yyyymmdd INT,
+						  id TIMEUUID,
+						  sender_id TEXT,
+						  receiver_id TEXT,
+						  type TEXT,
+						  approved_by TIMEUUID,
+                          timestamp TIMESTAMP,
+						  PRIMARY KEY (yyyymmdd, timestamp)
+             ) WITH CLUSTERING ORDER BY (timestamp DESC);

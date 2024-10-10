@@ -1,0 +1,20 @@
+server:
+  port: 8079
+
+spring:
+  application:
+    name: jcass
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.logging: ERROR
+
+scheduler:
+  interval: 10000
+
+cassandra:
+  enabled: false
+  keyspace: test
+
+management.endpoint.info.enabled: true
+management.endpoints.web.exposure.include: health,metrics,prometheus,loggers
